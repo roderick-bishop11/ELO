@@ -34,6 +34,20 @@ Tony Stark, J.A.R.V.I.S. and Robert Elo Bishop(my grandfather). ELO is meant to 
 - [OpenAI API](https://platform.openai.com/docs/overview)- interact with models
 - [Exa](https://github.com/exa-labs/exa-py)- Search for AI
 
+## to do
+
+- [ ] CI/CD pipeline
+- [ ] Readme's
+- Feature set
+- wireframes
+- module separation
+- startup/config function
+- What does the SDLC look like
+- delivery spec -> when it's delivered v1, how will it be delieverd?
+    - `python main.py`
+    - executable?
+
+
 ## Changelog
 
 - 3.8.24: Got instruction on project organization/implementation. Separate part into epics/bodies of work. Could use JIRA or some other tool to organize and stay on track. Simplify README & develop a more clear project. 
