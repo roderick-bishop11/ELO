@@ -24,17 +24,19 @@ Tony Stark, J.A.R.V.I.S. and Robert Elo Bishop(my grandfather). ELO is meant to 
 - Chat GPT integration or Local LLM generation; The option to choose/switch models.
 - Internet Search (whitelisted sources)
 - Wake and shut down word/phrases/intents
+- Modes for verbose logging/print out
 
-## tech stack/integrations
+## Possible tech stack/modules/tools to use
 
-Python- language
-Poetry- build system
-pyttsx4/Elevel labs- Text to speech
-OpenAI API- interact with models
-Exa- Search for AI
-Slint-Desktop UI for python
+- [Python](https://www.python.org/)- language
+- [Poetry](https://python-poetry.org/)- build system
+- [pyttsx4](https://pypi.org/project/pyttsx4/) or [Eleven labs](https://elevenlabs.io/)- Text to speech
+- [OpenAI API](https://platform.openai.com/docs/overview)- interact with models
+- [Exa](https://github.com/exa-labs/exa-py)- Search for AI
 
 ## Changelog
+
+- 3.8.24: Got instruction on project organization/implementation. Separate part into epics/bodies of work. Could use JIRA or some other tool to organize and stay on track. Simplify README & develop a more clear project. 
 
 ## contributors
 

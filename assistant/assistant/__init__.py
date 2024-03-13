@@ -1,13 +1,12 @@
-import threading
 import time
-
+import datetime
+import os
+import logging
 import speech_recognition as sr
 import pyttsx4
-import datetime
 from openai import OpenAI
 import elevenlabs
 from elevenlabs import play
-import os
 from dotenv import load_dotenv
 from exa_py import Exa
 
@@ -26,18 +25,29 @@ elevenlabs.set_api_key(api_key=elevenKey)
 # initialize integration components
 exa: Exa = Exa(exaKey)
 
+# Create and configure logger
+today = datetime.datetime.now().__str__()
+logging.basicConfig(filename=f"log{today}.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='w')
+ 
+logger = logging.getLogger()
 
-def speakAndPrint(text) -> None:
-    # audio = elevenlabs.generate(
-    #     text=text, voice="Adam", model="eleven_monolingual_v1", api_key=elevenKey
-    # )
-    # play(audio)
+# todo: timer metrics on request completion time
+# todo: GPT-4
+
+
+def speak_and_print(text) -> None:
+    audio = elevenlabs.generate(
+        text=text, voice="George", model="eleven_monolingual_v1", api_key=elevenKey
+    )
+    play(audio)
     print(text)
-    ttsEngine.say(text=text)
-    ttsEngine.runAndWait()
+    # ttsEngine.say(text=text)
+    # ttsEngine.runAndWait()
 
 
-def wishMe() -> None:
+def wish_me() -> None:
     hour: int = int(datetime.datetime.now().hour)
     if 0 <= hour < 12:
         greeting = "Good Morning, Rod! How may I help you"
@@ -47,12 +57,11 @@ def wishMe() -> None:
 
     else:
         greeting = "Good evening, Sir"
-    speakAndPrint(greeting)
+    speak_and_print(greeting)
 
 
 # the assistant will listen to you, go speech to text.
 def listen() -> str:
-    print(sr.Microphone.list_working_microphones())
     with sr.Microphone(device_index=1) as source:
 
         print("Listening...")
@@ -73,7 +82,7 @@ def listen() -> str:
 
 
 # submit text to LLM
-def textToModel(query: str) -> None:
+def text_to_model(query: str) -> None:
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -83,7 +92,7 @@ def textToModel(query: str) -> None:
         ]
     )
     reply = summarize(completion.choices[0].message.content)
-    speakAndPrint(reply)
+    speak_and_print(reply)
 
 
 def summarize(response: str) -> str:
@@ -94,21 +103,21 @@ def summarize(response: str) -> str:
         return response
 
 
-def listenForKeywords(query: str) -> bool:
+def parse_keywords(query: str) -> bool:
     skipLLM = False
     if query == "stop":
-        speakAndPrint("Okay, hope I was able to help!")
-        exit()
+        speak_and_print("Okay, hope I was able to help!")
+        os._exit(0)
     elif "thanks elo that is all I needed" in query:
-        speakAndPrint("Okay, hope I was able to help!")
-        exit()
+        speak_and_print("Okay, hope I was able to help!")
+        os._exit(0)
     elif 'search' in query:
-        speakAndPrint("I can run a search query for that if you'd like")
+        speak_and_print("I can run a search query for you. Please confirm")
         if confirm():
-            speakAndPrint("What would you like me to search?")
+            speak_and_print("What would you like me to search?")
             desiredSearch = listen()
             contents = exa.search_and_contents(desiredSearch)
-            speakAndPrint("I've come up with a couple of results and displayed them in your console")
+            speak_and_print("I've come up with a couple of results and displayed them in your console")
             print(contents.results)
             skipLLM = True
 
@@ -119,25 +128,26 @@ def listenForKeywords(query: str) -> bool:
 def confirm() -> bool:
     confirmationQuery = listen()
     if confirmationQuery == "yes" or "ok" or "sure":
-        speakAndPrint("Confirmed")
+        speak_and_print("Confirmed")
         return True
     else:
-        speakAndPrint("alright.")
+        speak_and_print("alright.")
         return False
 
-
+#todo: calibrate function needs to also set a mic to use for the session. This way it makes it smoother. 
 def calibrate() -> int:
-    speakAndPrint("Hi. Elo is booting up. Please wait.")
+    speak_and_print("Hi. Elo is booting up. Please wait.")
     print("Initializing...")
-    microphoneDict = sr.Microphone.list_working_microphones()
-    print("A list of mics! %s" % microphoneDict)
-    print("A list of mic values! %s" % microphoneDict.values())
-    for mic in microphoneDict.values():
+    microphones = sr.Microphone.list_working_microphones()
+    print("A list of mics! %s" % microphones)
+    print("A list of mic values! %s" % microphones.values())
+    for mic in microphones.values():
         if mic == 'Shure MV7':
             return 1
+        logger.info(f"ELO Chose device 1{microphones.get('Shure MV7')}")
     else:
-        speakAndPrint("Please connect your iphone's mic sir.")
-        iphone = microphoneDict.get('Skywalker (2) Microphone')
+        speak_and_print("Please connect your iphone's mic sir.")
+        iphone = microphones.get('Skywalker (2) Microphone')
         time.sleep(5)
         return iphone
 
@@ -145,15 +155,15 @@ def calibrate() -> int:
 def main() -> None:
     startup = calibrate()
     if startup == 0:
-        speakAndPrint("Not able to connect to audio source")
-        exit()
-    wishMe()
+        speak_and_print("Not able to connect to audio source")
+        quit(0) 
+    wish_me
     while True:
         query = listen().lower()
-        if not listenForKeywords(query):
-            textToModel(query)
+        if not parse_keywords(query):
+            text_to_model(query)
         else:
-            break
+            pass
 
 
 if __name__ == "__main__":
