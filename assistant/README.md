@@ -34,9 +34,11 @@ Tony Stark, J.A.R.V.I.S. and Robert Elo Bishop(my grandfather). ELO is meant to 
 - [Exa](https://github.com/exa-labs/exa-py)- Search for AI
 - [Pre-Commmit](https://pre-commit.com/)- for pre-commit tasks
 
-# To do
+## To do
 
-- [ ] - 
+- fix logger
+- visualize the sound coming back from elevel labs.
+
 ## Changelog
 
 - 3.8.24: Got instruction on project organization/implementation. Separate part into epics/bodies of work. Could use JIRA or some other tool to organize and stay on track. Simplify README & develop a more clear project. 
